@@ -1,10 +1,10 @@
 package org.iesalandalus.programacion.cuatroenraya.modelo;
 
 public enum Ficha {
-    V;
-
+    AZUL,
+    VERDE;
     @Override
     public String toString() {
-        return name();
+        return name().substring(0, 1);
     }
 }
