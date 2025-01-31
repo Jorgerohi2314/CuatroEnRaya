@@ -1,7 +1,5 @@
 package org.iesalandalus.programacion.cuatroenraya.modelo;
 
-import java.util.Arrays;
-
 public class Tablero {
     public static final int FILAS = 6;
     public static final int COLUMNAS = 7;
@@ -185,7 +183,6 @@ public class Tablero {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        // Recorrer las filas en orden inverso (de FILAS-1 a 0)
         for (int i = FILAS - 1; i >= 0; i--) {
             sb.append("|");
             for (int j = 0; j < COLUMNAS; j++) {
@@ -198,11 +195,8 @@ public class Tablero {
             sb.append("|\n");
         }
 
-        // Añadir la línea de guiones en la parte inferior
         sb.append(" ");
-        for (int j = 0; j < COLUMNAS; j++) {
-            sb.append("-");
-        }
+        sb.append("-".repeat(COLUMNAS));
         sb.append("\n");
 
         return sb.toString();
