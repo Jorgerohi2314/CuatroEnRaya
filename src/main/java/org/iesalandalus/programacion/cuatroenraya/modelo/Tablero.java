@@ -117,42 +117,55 @@ public class Tablero {
         return menor;
     }
 
-    private boolean comprobarDianogalNE(int filaActual, int columnaActual, Ficha ficha) {
+    private boolean comprobarDiagonalNE(int filaActual, int columnaActual, Ficha ficha) {
         int n = 0;
-        int desplazamiento = menor(filaActual, columnaActual);
-        int filaInicial = filaActual - desplazamiento;
-        int columnaInicial = columnaActual - desplazamiento;
+        int fila = filaActual;
+        int columna = columnaActual;
 
-       for (int fila = filaInicial, columna = columnaInicial; fila < FILAS && columna < COLUMNAS; fila++, columna++) {
-           if (casillas[fila][columna].toString().equals(ficha.toString())) {
-               n++;
-           }else if (n < FICHAS_IGUALES_CONSECUTIVAS_NECESARIAS) {
-               n = 0;
-           }
-       }
-        return objetivoAlcanzado(n);
+        while (fila > 0 && columna > 0) {
+            fila--;
+            columna--;
+        }
+
+        while (fila < FILAS && columna < COLUMNAS) {
+            if (casillas[fila][columna].toString().equals(ficha.toString())) {
+                n++;
+                if (n >= FICHAS_IGUALES_CONSECUTIVAS_NECESARIAS) {
+                    return true;
+                }
+            } else {
+                n = 0;
+            }
+            fila++;
+            columna++;
+        }
+
+        return false;
     }
 
     private boolean comprobarDiagonalNO(int filaActual, int columnaActual, Ficha ficha) {
         int n = 0;
-        int desplazamiento = menor(filaActual, (COLUMNAS - columnaActual));
+        int desplazamiento = menor(filaActual, (COLUMNAS - 1 - columnaActual));
         int filaInicial = filaActual - desplazamiento;
         int columnaInicial = columnaActual + desplazamiento;
-        for (int fila = filaInicial, columna = columnaInicial; fila < FILAS && columna < COLUMNAS; fila++, columna++) {
+
+        for (int fila = filaInicial, columna = columnaInicial; fila < FILAS && columna >= 0; fila++, columna--) {
             if (casillas[fila][columna].toString().equals(ficha.toString())) {
                 n++;
-            }else if (n < FICHAS_IGUALES_CONSECUTIVAS_NECESARIAS) {
+                if (n >= FICHAS_IGUALES_CONSECUTIVAS_NECESARIAS) {
+                    return true;
+                }
+            } else {
                 n = 0;
             }
         }
-
-        return objetivoAlcanzado(n);
+        return false;
     }
 
     private boolean comprobarTirada(int fila, int columna) {
         Ficha ficha = casillas[fila][columna].getFicha();
         return comprobarHorizontal(fila, ficha) || comprobarVertical(columna, ficha)
-                || comprobarDiagonalNO(fila, columna, ficha) || comprobarDianogalNE(fila, columna, ficha);
+                || comprobarDiagonalNO(fila, columna, ficha) || comprobarDiagonalNE(fila, columna, ficha);
     }
 
     public boolean introducirFicha (int columna, Ficha ficha) throws CuatroEnRayaExcepcion {
@@ -172,17 +185,22 @@ public class Tablero {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-
-        for (int i = 0; i < FILAS; i++) {
+        // Recorrer las filas en orden inverso (de FILAS-1 a 0)
+        for (int i = FILAS - 1; i >= 0; i--) {
             sb.append("|");
             for (int j = 0; j < COLUMNAS; j++) {
-                sb.append(casillas[i][j]);
+                if (casillas[i][j].estaOcupada()) {
+                    sb.append(casillas[i][j].getFicha().toString());
+                } else {
+                    sb.append(" ");
+                }
             }
             sb.append("|\n");
         }
 
+        // Añadir la línea de guiones en la parte inferior
         sb.append(" ");
-        for (int j = 0; j < COLUMNAS ; j++) {
+        for (int j = 0; j < COLUMNAS; j++) {
             sb.append("-");
         }
         sb.append("\n");
